@@ -127,9 +127,24 @@ const App = () => {
         )}
 
         {audioFiles.length > 0 && !allReady && (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff9800] mb-4"></div>
-            <p className="text-[#aaa]">Carregando seus áudios...</p>
+          <div className="flex flex-col items-center justify-center h-full text-center p-6">
+            <MdOutlineLibraryMusic
+              size={48}
+              className="text-[#ff9800] mb-4 animate-pulse"
+            />
+
+            <p className="text-[#aaa] mb-2">
+              Processando {readyCount}/{audioFiles.length} áudios...
+            </p>
+
+            <div className="w-full max-w-md bg-[#333] rounded-full overflow-hidden h-4 shadow-inner">
+              <div
+                className="bg-[#ff9800] h-full transition-all duration-300 ease-out"
+                style={{
+                  width: `${(readyCount / audioFiles.length) * 100}%`,
+                }}
+              ></div>
+            </div>
           </div>
         )}
 
