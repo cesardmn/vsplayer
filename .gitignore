@@ -23,6 +23,7 @@ jspm_packages/
 # Compiled output
 dist/
 dist-ssr/
+dev-dist
 build/
 out/
 Release/
