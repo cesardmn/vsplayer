@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import WavesurferPlayer from '@wavesurfer/react'
 import { MdOutlineLibraryMusic } from 'react-icons/md'
 import { FaPlus, FaMinus, FaInfoCircle, FaPlay, FaPause } from 'react-icons/fa'
@@ -32,7 +32,7 @@ const App = () => {
     setReadyCount((prev) => prev + 1)
   }
 
-  const togglePlayStop = () => {
+  const togglePlayStop = useCallback(() => {
     const players = playersRef.current
     const anyPlaying = players.some((p) => p && p.isPlaying())
     players.forEach((p) => p && p.stop())
@@ -40,7 +40,26 @@ const App = () => {
       const selected = players[selectedIndex]
       if (selected) selected.play()
     }
-  }
+  }, [selectedIndex])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (audioFiles.length === 0) return
+
+      if (e.key === 'ArrowRight') {
+        togglePlayStop()
+      } else if (e.key === 'ArrowLeft') {
+        setSelectedIndex((prev) =>
+          prev === audioFiles.length - 1 ? 0 : prev + 1
+        )
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [audioFiles.length, togglePlayStop])
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-2">
