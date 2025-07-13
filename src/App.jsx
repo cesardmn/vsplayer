@@ -70,23 +70,6 @@ const App = () => {
           className="text-[#888] hover:text-white cursor-pointer"
         />
 
-        {audioFiles.length > 0 && allReady && (
-          <button
-            onClick={togglePlayStop}
-            className="flex items-center gap-2 bg-[#ff9800] hover:bg-[#f57c00] text-white px-4 py-2 rounded-full transition-colors"
-          >
-            {isAnyPlaying ? (
-              <>
-                <FaPause /> Parar
-              </>
-            ) : (
-              <>
-                <FaPlay /> Tocar
-              </>
-            )}
-          </button>
-        )}
-
         <label
           htmlFor="audio-upload"
           className="cursor-pointer p-2 rounded-full hover:bg-[#2a2a2a] transition-colors"
@@ -120,7 +103,7 @@ const App = () => {
                   'flex items-center p-3 rounded-lg cursor-pointer transition-all'
                 if (isPlaying) {
                   itemClass +=
-                    ' bg-gradient-to-r from-[#ff9800] to-[#f57c00] text-white shadow-md'
+                    ' bg-gradient-to-r from-[#f57c00] to-[#ff9800] text-white shadow-md'
                 } else if (isSelected) {
                   itemClass +=
                     ' bg-[#2a2a2a] hover:bg-[#333] border border-[#ff9800]'
@@ -190,7 +173,10 @@ const App = () => {
         </div>
 
         {/* WAVEFORM DISPLAY */}
-        <div className="w-full flex flex-col gap-2 overflow-x-auto">
+        <div
+          className="w-full flex flex-col gap-2 overflow-x-auto"
+          onClick={togglePlayStop}
+        >
           {audioFiles.map((file, index) => (
             <div
               key={index}
