@@ -8,7 +8,6 @@ import {
   FaPlay,
   FaArrowRight,
 } from 'react-icons/fa'
-import { RiApps2AddFill } from 'react-icons/ri'
 
 const formatTime = (seconds) => {
   if (isNaN(seconds)) return '0:00'
@@ -64,6 +63,9 @@ const App = () => {
     }
   }, [selectedIndex])
 
+  const listContainerRef = useRef(null)
+  const listItemRefs = useRef([])
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (audioFiles.length === 0) return
@@ -71,9 +73,19 @@ const App = () => {
       if (e.key === 'ArrowRight') {
         togglePlayStop()
       } else if (e.key === 'ArrowLeft') {
-        setSelectedIndex((prev) =>
-          prev === audioFiles.length - 1 ? 0 : prev + 1
-        )
+        const newIndex =
+          selectedIndex === audioFiles.length - 1 ? 0 : selectedIndex + 1
+        setSelectedIndex(newIndex)
+
+        // Scroll para o item selecionado
+        setTimeout(() => {
+          if (listItemRefs.current[newIndex] && listContainerRef.current) {
+            listItemRefs.current[newIndex].scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+            })
+          }
+        }, 0)
       }
     }
 
@@ -81,7 +93,7 @@ const App = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [audioFiles.length, togglePlayStop])
+  }, [audioFiles.length, togglePlayStop, selectedIndex])
 
   useEffect(() => {
     setWakeLockSupported('wakeLock' in navigator)
@@ -149,7 +161,7 @@ const App = () => {
       {/* MAIN CONTENT */}
       <main className="flex flex-col bg-bk-2 overflow-hidden">
         {/* AUDIO LIST */}
-        <section className="flex-1 overflow-y-auto p-4">
+        <section className="flex-1 overflow-y-auto p-4" ref={listContainerRef}>
           {audioFiles.length > 0 && allReady && (
             <div className="space-y-3">
               <ul className="space-y-2">
@@ -172,6 +184,7 @@ const App = () => {
                   return (
                     <li
                       key={index}
+                      ref={(el) => (listItemRefs.current[index] = el)}
                       onClick={() => setSelectedIndex(index)}
                       className={itemClass}
                     >
