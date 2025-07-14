@@ -1,0 +1,35 @@
+name: Deploy para cesardmn.github.io
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências e buildar
+        run: |
+          npm install
+          npm run build
+
+      - name: Clonar branch master do repositório cesardmn.github.io
+        run: |
+          git clone --branch=master https://x-access-token:${{ secrets.GH_PAGES_TOKEN }}@github.com/cesardmn/cesardmn.github.io.git cesardmn.github.io
+
+      - name: Copiar arquivos buildados para o repositório cesardmn.github.io
+        run: |
+          mkdir -p cesardmn.github.io/vsplayer
+          rm -rf cesardmn.github.io/vsplayer/*
+          cp -r dist/* cesardmn.github.io/vsplayer/
+          cd cesardmn.github.io
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add vsplayer
+          git commit -m "Atualiza app1 via GitHub Actions" || echo "Nada para commitar"
+          git push origin master
