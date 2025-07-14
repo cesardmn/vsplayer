@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import WavesurferPlayer from '@wavesurfer/react'
 import { MdOutlineLibraryMusic } from 'react-icons/md'
-import { FaPlus, FaMinus, FaArrowLeft, FaPlay, FaArrowRight } from 'react-icons/fa'
+import {
+  FaPlus,
+  FaMinus,
+  FaArrowLeft,
+  FaPlay,
+  FaArrowRight,
+} from 'react-icons/fa'
 
 const formatTime = (seconds) => {
   if (isNaN(seconds)) return '0:00'
@@ -135,7 +141,7 @@ const App = () => {
                         <div className="ml-2 text-sm font-mono">
                           {formatTime(
                             playersRef.current[index]?.getDuration() -
-                            playersRef.current[index]?.getCurrentTime()
+                              playersRef.current[index]?.getCurrentTime()
                           )}
                         </div>
                       ) : (
@@ -187,7 +193,6 @@ const App = () => {
                     Clique em "Add" para adicionar arquivos
                   </label>
                 </div>
-
 
                 <div className="space-y-4 text-left">
                   <div className="flex items-start gap-3">
@@ -241,17 +246,18 @@ const App = () => {
           {/* AUDIO INFO */}
           {allReady && (
             <div
-              className={`flex items-center p-3 rounded-lg transition-all ${isAnyPlaying
-                ? 'bg-gradient-to-r from-or-3 to-or-1 text-wt-1'
-                : 'bg-bk-2 border border-or-2'
-                }`}
+              className={`flex items-center p-3 rounded-lg transition-all ${
+                isAnyPlaying
+                  ? 'bg-gradient-to-r from-or-3 to-or-1 text-wt-1'
+                  : 'bg-bk-2 border border-or-2'
+              }`}
             >
               <span className="truncate flex-1 text-base font-medium">
                 {audioFiles[
                   isAnyPlaying
                     ? audioFiles.findIndex((_, i) =>
-                      playersRef.current[i]?.isPlaying?.()
-                    )
+                        playersRef.current[i]?.isPlaying?.()
+                      )
                     : selectedIndex
                 ]?.name.replace(/\.[^/.]+$/, '')}
               </span>
@@ -264,11 +270,11 @@ const App = () => {
                         playersRef.current[i]?.isPlaying?.()
                       )
                     ]?.getDuration() -
-                    playersRef.current[
-                      audioFiles.findIndex((_, i) =>
-                        playersRef.current[i]?.isPlaying?.()
-                      )
-                    ]?.getCurrentTime()
+                      playersRef.current[
+                        audioFiles.findIndex((_, i) =>
+                          playersRef.current[i]?.isPlaying?.()
+                        )
+                      ]?.getCurrentTime()
                   )}
                 </div>
               ) : (
