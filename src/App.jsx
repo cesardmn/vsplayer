@@ -8,6 +8,7 @@ import {
   FaPlay,
   FaArrowRight,
 } from 'react-icons/fa'
+import { RiApps2AddFill } from 'react-icons/ri'
 
 const formatTime = (seconds) => {
   if (isNaN(seconds)) return '0:00'
@@ -20,7 +21,11 @@ const App = () => {
   const [audioFiles, setAudioFiles] = useState([])
   const [readyCount, setReadyCount] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [playingCount, setPlayingCount] = useState(1)
+  const [playingCount, setPlayingCount] = useState(0) // Corrigido: inicializado com 0
+
+  const [wakeLockSupported, setWakeLockSupported] = useState(false)
+  const [wakeLockEnabled, setWakeLockEnabled] = useState(false)
+  const wakeLockRef = useRef(null)
 
   const playersRef = useRef([])
 
@@ -78,6 +83,39 @@ const App = () => {
     }
   }, [audioFiles.length, togglePlayStop])
 
+  useEffect(() => {
+    setWakeLockSupported('wakeLock' in navigator)
+  }, [])
+
+  const toggleWakeLock = async () => {
+    if (!wakeLockSupported) return
+
+    try {
+      if (!wakeLockEnabled) {
+        wakeLockRef.current = await navigator.wakeLock.request('screen')
+        wakeLockRef.current.addEventListener('release', () => {
+          setWakeLockEnabled(false)
+        })
+        setWakeLockEnabled(true)
+      } else if (wakeLockRef.current) {
+        await wakeLockRef.current.release()
+        wakeLockRef.current = null
+        setWakeLockEnabled(false)
+      }
+    } catch (err) {
+      console.error('Wake Lock error:', err)
+      setWakeLockEnabled(false)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release().catch(() => {})
+      }
+    }
+  }, [])
+
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-0">
       {/* TOP BAR */}
@@ -88,21 +126,24 @@ const App = () => {
           </h1>
         </div>
 
-        <label
-          htmlFor="audio-upload"
-          className="cursor-pointer p-2 rounded-lg bg-bk-1 hover:bg-gr-3 transition-colors flex items-center gap-2"
-        >
-          <MdOutlineLibraryMusic className="text-or-1" size={20} />
-          <span className="text-gr-1 text-sm">Add</span>
-        </label>
-        <input
-          id="audio-upload"
-          type="file"
-          accept="audio/*"
-          multiple
-          className="hidden"
-          onChange={handleFilesChange}
-        />
+        <div className="flex items-center gap-4">
+          {wakeLockSupported && (
+            <div className="flex items-center gap-2">
+              <span className="ms-3 text-sm font-medium text-gr-1">
+                {wakeLockEnabled ? 'Tela ativa' : 'Manter tela ligada'}
+              </span>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={wakeLockEnabled}
+                  onChange={toggleWakeLock}
+                  className="sr-only peer"
+                />
+                <div className="relative w-11 h-6 bg-bk-1 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-wt-1 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-gr-1 after:border-gr-3 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-or-2"></div>
+              </label>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* MAIN CONTENT */}
@@ -192,6 +233,14 @@ const App = () => {
                   >
                     Clique em "Add" para adicionar arquivos
                   </label>
+                  <input
+                    id="audio-upload"
+                    type="file"
+                    accept="audio/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFilesChange}
+                  />
                 </div>
 
                 <div className="space-y-4 text-left">
@@ -235,6 +284,23 @@ const App = () => {
                       para Play/Stop
                     </p>
                   </div>
+
+                  {wakeLockSupported && (
+                    <div className="flex items-start gap-3">
+                      <div className="bg-bk-2 p-2 rounded-lg border border-gr-3">
+                        <div className="w-4 h-4 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-or-1"></div>
+                        </div>
+                      </div>
+                      <p className="text-gr-1 flex-1">
+                        Ative{' '}
+                        <span className="text-or-1 font-medium">
+                          "Manter tela ligada"
+                        </span>{' '}
+                        no cabeçalho para evitar que a tela desligue
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

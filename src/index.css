@@ -66,3 +66,16 @@ body,
 ::-webkit-scrollbar {
   display: none;
 }
+
+input:checked ~ .toggle-dot {
+  transform: translateX(100%);
+  background-color: var(--color-wt-1);
+}
+
+.toggle-line {
+  background-color: var(--color-bk-1);
+}
+
+input:checked ~ .toggle-line {
+  background-color: var(--color-or-2);
+}
