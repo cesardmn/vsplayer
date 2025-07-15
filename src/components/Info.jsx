@@ -9,8 +9,18 @@ import {
 
 import { PiWaveformBold } from "react-icons/pi";
 
+import { useAudioUpload } from '../hooks/useAudioUpload'
 
 const Info = () => {
+
+  const { processFiles } = useAudioUpload()
+
+  const handleFilesUpload = (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    processFiles(files)
+  }
+
   return (
     <div className="flex flex-col items-center justify-start h-full overflow-y-auto p-4 sm:p-6 space-y-6">
       {/* Card principal de upload */}
@@ -38,6 +48,7 @@ const Info = () => {
             accept="audio/*"
             multiple
             className="hidden"
+            onChange={handleFilesUpload}
           />
 
           <p className="text-sm text-gr-2 mt-2">
