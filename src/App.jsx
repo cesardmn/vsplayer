@@ -1,18 +1,30 @@
+import Header from './components/Header.jsx'
+import Info from './components/Info.jsx'
+
+import { usePlayer } from './store/playerStore.jsx'
+
 const App = () => {
+  const { infoShow } = usePlayer()
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-2">
-      <section className="bg-bk-2 p-4 flex justify-between items-center">
-        top
-      </section>
-
       <section className="bg-bk-2">
-        list
+        <Header />
       </section>
 
-      <section className="bg-bk-2 p-4 flex justify-between items-center">
-        controls
+      <section className="bg-bk-2 overflow-y-hidden ">
+        {infoShow && <Info />}
       </section>
+
+
+      {
+        !infoShow &&
+
+        <section className="bg-bk-2 p-4 flex justify-between items-center">
+          controls
+        </section>
+      }
+
     </div>
   )
 }

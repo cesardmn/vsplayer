@@ -1,10 +1,13 @@
 import { MdOutlineScreenLockPortrait } from 'react-icons/md'
 import { useState, useEffect } from 'react'
+import { usePlayer } from '../store/playerStore'
 
 const Header = () => {
   const [wakeLock, setWakeLock] = useState(null)
   const [isLocked, setIsLocked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const { toggleInfoShow } = usePlayer()
 
   const toggleLockScreen = async () => {
     if (isLocked) {
@@ -12,6 +15,11 @@ const Header = () => {
     } else {
       await requestWakeLock()
     }
+  }
+
+  const handleInfoToggle = () => {
+    console.log('Info toggled')
+    toggleInfoShow((prev) => !prev)
   }
 
   const requestWakeLock = async () => {
@@ -54,7 +62,7 @@ const Header = () => {
 
   return (
     <header className="w-full flex justify-between items-center p-4">
-      <h1 className="font-bold text-3xl">
+      <h1 className="font-bold text-3xl" onClick={handleInfoToggle}>
         <span className="text-or-3">VS</span>
         &nbsp;
         <span>Player</span>
