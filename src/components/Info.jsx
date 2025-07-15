@@ -1,18 +1,14 @@
 import {
   MdOutlineLibraryMusic,
-  MdOutlineScreenLockPortrait
+  MdOutlineScreenLockPortrait,
 } from 'react-icons/md'
-import {
-  FaArrowLeft,
-  FaArrowRight,
-} from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 
-import { PiWaveformBold } from "react-icons/pi";
+import { PiWaveformBold } from 'react-icons/pi'
 
 import { useAudioUpload } from '../hooks/useAudioUpload'
 
 const Info = () => {
-
   const { processFiles } = useAudioUpload()
 
   const handleFilesUpload = (e) => {
@@ -32,14 +28,15 @@ const Info = () => {
             style={{ animationDuration: '2s' }}
           />
 
-
           <label
             htmlFor="audio-upload"
             className="inline-flex items-center justify-center w-full px-6 py-3 rounded-lg font-medium transition-all
                      bg-gradient-to-r from-or-3 to-or-1 text-bk-1 hover:shadow-lg hover:shadow-or-1/30
                      focus:outline-none focus:ring-2 focus:ring-or-3 focus:ring-offset-2 focus:ring-offset-bk-2"
           >
-            <h2 className="text-xl font-bold text-wt-1 mb-2">Adicionar Músicas</h2>
+            <h2 className="text-xl font-bold text-wt-1 mb-2">
+              Adicionar Músicas
+            </h2>
           </label>
 
           <input
@@ -70,7 +67,8 @@ const Info = () => {
           </div>
           <div>
             <p className="text-gr-1">
-              <span className="text-or-1 font-medium">Clique na wave</span> para Play/Stop.
+              <span className="text-or-1 font-medium">Clique na wave</span> para
+              Play/Stop.
             </p>
           </div>
         </div>
@@ -82,7 +80,8 @@ const Info = () => {
           </div>
           <div>
             <p className="text-gr-1">
-              Use a <span className="text-or-1 font-medium">seta esquerda</span> para navegar entre os áudios.
+              Use a <span className="text-or-1 font-medium">seta esquerda</span>{' '}
+              para navegar entre os áudios.
             </p>
           </div>
         </div>
@@ -94,7 +93,8 @@ const Info = () => {
           </div>
           <div>
             <p className="text-gr-1">
-              Use a <span className="text-or-1 font-medium">seta direita</span> para Play/Stop.
+              Use a <span className="text-or-1 font-medium">seta direita</span>{' '}
+              para Play/Stop.
             </p>
           </div>
         </div>
@@ -106,11 +106,11 @@ const Info = () => {
           </div>
           <div>
             <p className="text-gr-1">
-              Ative o <span className="text-or-1 font-medium">bloqueio de tela</span> no canto superior direito para manter a tela sempre visível.
+              Ative o{' '}
+              <span className="text-or-1 font-medium">bloqueio de tela</span> no
+              canto superior direito para manter a tela sempre visível.
             </p>
-            <p className="text-gr-1">
-              Depende do suporte do seu aparelho.
-            </p>
+            <p className="text-gr-1">Depende do suporte do seu aparelho.</p>
           </div>
         </div>
       </div>

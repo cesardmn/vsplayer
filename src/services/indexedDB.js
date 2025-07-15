@@ -2,7 +2,6 @@ const DB_NAME = 'UserAudioDB'
 const STORE = 'audios'
 
 export const DB = (() => {
-
   const openDB = async () => {
     return new Promise((res, rej) => {
       const req = indexedDB.open(DB_NAME, 1)
@@ -98,5 +97,4 @@ export const DB = (() => {
     deleteAudio,
     getAudioFile,
   }
-
 })()

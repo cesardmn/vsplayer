@@ -5,14 +5,17 @@ const Loader = () => {
 
   if (!isProcessing) return null
 
-  const percentage = totalFilesToProcess > 0
-    ? Math.min(100, (processedFilesCount / totalFilesToProcess) * 100)
-    : 0
+  const percentage =
+    totalFilesToProcess > 0
+      ? Math.min(100, (processedFilesCount / totalFilesToProcess) * 100)
+      : 0
 
   return (
     <div className="fixed inset-0 bg-bk-3 bg-opacity-90 flex items-center justify-center z-50">
       <div className="bg-bk-2 p-6 rounded-lg max-w-md w-full mx-4">
-        <h3 className="text-lg font-semibold text-or-1 mb-4">Processando arquivos...</h3>
+        <h3 className="text-lg font-semibold text-or-1 mb-4">
+          Processando arquivos...
+        </h3>
 
         <div className="mb-2 flex justify-between text-sm">
           <span>
@@ -29,9 +32,7 @@ const Loader = () => {
         </div>
 
         {percentage === 100 && (
-          <p className="mt-3 text-sm text-gr-1 animate-pulse">
-            Finalizando...
-          </p>
+          <p className="mt-3 text-sm text-gr-1 animate-pulse">Finalizando...</p>
         )}
       </div>
     </div>

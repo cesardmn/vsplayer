@@ -5,7 +5,7 @@ import Loader from './components/Loader.jsx'
 import { usePlayer } from './store/playerStore.jsx'
 
 const App = () => {
-  const { infoShow, isProcessing } = usePlayer()
+  const { infoShow } = usePlayer()
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-2">

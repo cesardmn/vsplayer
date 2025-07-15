@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { WS } from '../services/waveurfer'
 import { DB } from '../services/indexedDB'
 import { usePlayer } from '../store/playerStore'
@@ -8,7 +7,7 @@ export const useAudioUpload = () => {
     setTotalFilesToProcess,
     setProcessedFilesCount,
     setIsProcessing,
-    toggleInfoShow
+    toggleInfoShow,
   } = usePlayer()
 
   const processFiles = async (inputFiles) => {
@@ -16,12 +15,11 @@ export const useAudioUpload = () => {
       setTotalFilesToProcess(inputFiles.length)
       setProcessedFilesCount(0)
       setIsProcessing(true)
-      
-      // Esconder a tela de info apenas se estiver visível
+
       toggleInfoShow(false)
 
       let processed = 0
-      
+
       for (const file of inputFiles) {
         try {
           const { name, lastModified } = file
@@ -33,19 +31,18 @@ export const useAudioUpload = () => {
             const peaks = await WS.getPeaks(file)
             await DB.saveAudio(name, { extension, lastModified, peaks }, file)
           }
-          
+
           processed++
           setProcessedFilesCount(processed)
         } catch (error) {
           console.error('Error processing file:', file.name, error)
-          // Continuar com o próximo arquivo mesmo se um falhar
         }
       }
     } catch (error) {
       console.error('Error in processFiles:', error)
     } finally {
       setIsProcessing(false)
-      // Não resetar os contadores imediatamente - deixar o Loader mostrar o resultado final
+
     }
   }
 
