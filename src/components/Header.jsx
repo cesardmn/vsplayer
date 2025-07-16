@@ -3,135 +3,21 @@ import {
   MdDelete,
   MdInstallDesktop,
 } from 'react-icons/md'
-import { useState, useEffect } from 'react'
 import { usePlayer } from '../store/playerStore'
-import { DB } from '../services/indexedDB'
+import { useWakeLock } from '../hooks/useWakeLock'
+import { usePWAInstall } from '../hooks/usePWAInstall'
+import { useDBCleanup } from '../hooks/useDBCleanup'
 
 const Header = () => {
-  const [wakeLock, setWakeLock] = useState(null)
-  const [isLocked, setIsLocked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
-  const [isAppInstalled, setIsAppInstalled] = useState(false)
   const { toggleInfoShow, setFileList } = usePlayer()
-
-  useEffect(() => {
-    const checkInstallation = () => {
-      const isInstalled =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone ||
-        document.referrer.includes('android-app://')
-      setIsAppInstalled(isInstalled)
-    }
-
-    checkInstallation()
-
-    const handleBeforeInstallPrompt = (e) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-      setIsAppInstalled(false)
-    }
-
-    const handleAppInstalled = () => {
-      setIsAppInstalled(true)
-      setDeferredPrompt(null)
-    }
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.addEventListener('appinstalled', handleAppInstalled)
-
-    return () => {
-      window.removeEventListener(
-        'beforeinstallprompt',
-        handleBeforeInstallPrompt
-      )
-      window.removeEventListener('appinstalled', handleAppInstalled)
-    }
-  }, [])
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return
-
-    deferredPrompt.prompt()
-
-    const { outcome } = await deferredPrompt.userChoice
-    console.log(`User response to the install prompt: ${outcome}`)
-
-    setDeferredPrompt(null)
-  }
-
-  const toggleLockScreen = async () => {
-    if (isLocked) {
-      await releaseWakeLock()
-    } else {
-      await requestWakeLock()
-    }
-  }
+  const { isLocked, isLoading, toggleLockScreen } = useWakeLock()
+  const { deferredPrompt, isAppInstalled, handleInstallClick } = usePWAInstall()
+  const { handleClearDB } = useDBCleanup(setFileList)
 
   const handleInfoToggle = () => {
     console.log('Info toggled')
     toggleInfoShow((prev) => !prev)
   }
-
-  const handleClearDB = async () => {
-    if (confirm('Tem certeza que deseja limpar todos os áudios salvos?')) {
-      try {
-        const db = await DB.openDB()
-        const tx = db.transaction('audios', 'readwrite')
-        const store = tx.objectStore('audios')
-        const clearReq = store.clear()
-
-        clearReq.onsuccess = () => {
-          console.log('IndexedDB limpo com sucesso')
-          setFileList([])
-        }
-
-        clearReq.onerror = (error) => {
-          console.error('Erro ao limpar IndexedDB:', error)
-        }
-      } catch (error) {
-        console.error('Erro ao acessar IndexedDB:', error)
-      }
-    }
-  }
-
-  const requestWakeLock = async () => {
-    if (!('wakeLock' in navigator)) {
-      console.warn('Wake Lock API not supported')
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      const lock = await navigator.wakeLock.request('screen')
-      setWakeLock(lock)
-      setIsLocked(true)
-
-      lock.addEventListener('release', () => {
-        setIsLocked(false)
-      })
-    } catch (err) {
-      console.error('Error requesting wake lock:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const releaseWakeLock = async () => {
-    if (wakeLock) {
-      await wakeLock.release()
-      setWakeLock(null)
-      setIsLocked(false)
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (wakeLock) {
-        wakeLock.release()
-      }
-    }
-  }, [wakeLock])
 
   return (
     <header className="w-full flex justify-between items-center p-4">
