@@ -25,9 +25,9 @@ const Wave = () => {
       wsRef.current = WaveSurfer.create({
         container: waveRef.current,
         height: 60,
-        waveColor: '#ff9800',
-        progressColor: '#f57c00',
-        cursorColor: '#ededed',
+        waveColor: '#0d0d0d',
+        progressColor: '#ef6c00',
+        cursorColor: '#e0e0e0',
         splitChannels: true,
         responsive: true,
         interact: false,
@@ -142,20 +142,17 @@ const Wave = () => {
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <h2 className="text-or-2 font-medium text-lg truncate max-w-[70%]">
+        <div
+          className={`flex justify-between items-center ${isPlaying ? 'text-wt-3' : 'text-gr-2'}`}
+        >
+          <h2>
             {(isPlaying ? currentFile : selectedFile)?.split('.')[0] ||
-              'Sem áudio'}
+              ''}
           </h2>
-          <span
-            className={`font-mono text-sm font-bold ${isPlaying ? 'text-or-1' : 'text-gr-2'}`}
-          >
-            {isPlaying ? `-${remainingTime}` : duration}
-          </span>
+          <span>{isPlaying ? `-${remainingTime}` : duration}</span>
         </div>
       </div>
     </section>
   )
 }
-
 export default Wave
