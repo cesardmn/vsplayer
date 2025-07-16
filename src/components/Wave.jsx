@@ -21,7 +21,7 @@ const Wave = () => {
         responsive: true,
         interact: false,
         autoScroll: true,
-        minPxPerSec: 100,
+        minPxPerSec: 80,
         partialRender: true,
         fillParent: true,
       })

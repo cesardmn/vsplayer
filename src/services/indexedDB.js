@@ -39,8 +39,8 @@ export const DB = (() => {
       tx.onsuccess = () => {
         const record = tx.result
         if (!record) return res(null)
-        const { name: n, ext, lastModified, peaks } = record
-        res({ name: n, ext, lastModified, peaks })
+        const { name: n, duration, lastModified, peaks } = record
+        res({ name: n, duration, lastModified, peaks })
       }
     })
   }
@@ -51,7 +51,7 @@ export const DB = (() => {
       const fullRecord = {
         name,
         lastModified: meta.lastModified,
-        ext: meta.ext,
+        duration: meta.duration,
         peaks: meta.peaks,
         file: fileBlob,
       }

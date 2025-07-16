@@ -12,6 +12,13 @@ export const useAudioUpload = () => {
     setFileList,
   } = usePlayer()
 
+  const formatDuration = (seconds) => {
+    if (!seconds) return '0:00'
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`
+  }
+
   const processFiles = async (inputFiles) => {
     try {
       setTotalFilesToProcess(inputFiles.length)
@@ -25,20 +32,23 @@ export const useAudioUpload = () => {
       for (const file of inputFiles) {
         try {
           const { name, lastModified } = file
-          const extension = name.split('.').pop().toLowerCase()
           let audioMeta = await DB.getAudioMeta(name)
 
           if (!audioMeta || audioMeta.lastModified !== lastModified) {
             await DB.deleteAudio(name)
-            const peaks = await WS.getPeaks(file)
-            await DB.saveAudio(name, { extension, lastModified, peaks }, file)
+            const { peaks, duration } = await WS.getMeta(file)
+            await DB.saveAudio(name, { duration, lastModified, peaks }, file)
             audioMeta = await DB.getAudioMeta(name)
           }
 
           if (audioMeta) {
+            console.log(audioMeta)
             const alreadyExists = updatedList.includes(audioMeta.name)
             if (!alreadyExists) {
-              updatedList.push(audioMeta.name)
+              updatedList.push({
+                name: audioMeta.name,
+                duration: formatDuration(audioMeta.duration),
+              })
             }
           }
 
