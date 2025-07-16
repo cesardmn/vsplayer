@@ -10,4 +10,7 @@ export const usePlayer = create((set) => ({
   setProcessedFilesCount: (count) => set({ processedFilesCount: count }),
   isProcessing: false,
   setIsProcessing: (isProcessing) => set({ isProcessing }),
+
+  fileList: [],
+  setFileList: (fileList) => set({ fileList }),
 }))

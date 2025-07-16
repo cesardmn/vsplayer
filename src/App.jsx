@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Header from './components/Header.jsx'
 import Info from './components/Info.jsx'
 import Loader from './components/Loader.jsx'
@@ -5,7 +6,11 @@ import Loader from './components/Loader.jsx'
 import { usePlayer } from './store/playerStore.jsx'
 
 const App = () => {
-  const { infoShow } = usePlayer()
+  const { infoShow, setFileList, fileList } = usePlayer()
+
+  useEffect(() => {
+    setFileList([])
+  }, [setFileList])
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-2">
@@ -16,6 +21,11 @@ const App = () => {
       <section className="bg-bk-2 overflow-y-hidden relative">
         {infoShow && <Info />}
         <Loader />
+
+        {fileList.length > 0 &&
+          [...fileList].sort().map((file, index) => {
+            return <div key={index}>{file}</div>
+          })}
       </section>
 
       {!infoShow && (
