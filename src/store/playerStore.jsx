@@ -13,4 +13,7 @@ export const usePlayer = create((set) => ({
 
   fileList: [],
   setFileList: (fileList) => set({ fileList }),
+
+  selectedFile: '',
+  setSelectedFile: (file) => set({ selectedFile: file }),
 }))
