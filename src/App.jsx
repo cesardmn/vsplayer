@@ -2,11 +2,12 @@ import { useEffect } from 'react'
 import Header from './components/Header.jsx'
 import Info from './components/Info.jsx'
 import Loader from './components/Loader.jsx'
+import AudioList from './components/AudioList.jsx'
 
 import { usePlayer } from './store/playerStore.jsx'
 
 const App = () => {
-  const { infoShow, setFileList, fileList } = usePlayer()
+  const { infoShow, setFileList } = usePlayer()
 
   useEffect(() => {
     setFileList([])
@@ -21,11 +22,7 @@ const App = () => {
       <section className="bg-bk-2 overflow-y-hidden relative">
         {infoShow && <Info />}
         <Loader />
-
-        {fileList.length > 0 &&
-          [...fileList].sort().map((file, index) => {
-            return <div key={index}>{file}</div>
-          })}
+        <AudioList />
       </section>
 
       {!infoShow && (
