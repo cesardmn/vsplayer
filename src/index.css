@@ -79,3 +79,15 @@ input:checked ~ .toggle-dot {
 input:checked ~ .toggle-line {
   background-color: var(--color-or-2);
 }
+
+@supports (height: 100dvh) {
+  .safe-area {
+    height: 100dvh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+.wave-container {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}

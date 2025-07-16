@@ -30,12 +30,12 @@ const Header = () => {
         const tx = db.transaction('audios', 'readwrite')
         const store = tx.objectStore('audios')
         const clearReq = store.clear()
-        
+
         clearReq.onsuccess = () => {
           console.log('IndexedDB limpo com sucesso')
           setFileList([]) // Limpa a lista de arquivos no estado
         }
-        
+
         clearReq.onerror = (error) => {
           console.error('Erro ao limpar IndexedDB:', error)
         }

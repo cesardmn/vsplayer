@@ -15,7 +15,7 @@ const App = () => {
   }, [setFileList])
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] h-dvh w-dvw bg-bk-3 text-gr-1 gap-2">
+    <div className="grid grid-rows-[auto_1fr_auto] h-[100dvh] w-dvw bg-bk-3 text-gr-1 gap-2 safe-area">
       <section className="bg-bk-2">
         <Header />
       </section>

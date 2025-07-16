@@ -122,14 +122,14 @@ const Wave = () => {
   }
 
   return (
-    <section className="flex flex-col gap-2 bg-bk-1 px-4 py-4 border-t border-gr-3">
+    <section className="wave-container flex flex-col gap-2 bg-bk-1 px-4 py-4 border-t border-gr-3">
+      {' '}
       <div
         ref={waveRef}
         className="flex w-full h-36 overflow-scroll bg-bk-2 rounded-2xl items-center"
         style={{ contain: 'strict' }}
         onClick={togglePlayStop}
       />
-
       <div className="w-full space-y-1 px-2">
         {isPlaying && (
           <div className="w-full bg-bk-2 h-1 rounded-full overflow-hidden">
@@ -146,8 +146,7 @@ const Wave = () => {
           className={`flex justify-between items-center ${isPlaying ? 'text-wt-3' : 'text-gr-2'}`}
         >
           <h2>
-            {(isPlaying ? currentFile : selectedFile)?.split('.')[0] ||
-              ''}
+            {(isPlaying ? currentFile : selectedFile)?.split('.')[0] || ''}
           </h2>
           <span>{isPlaying ? `-${remainingTime}` : duration}</span>
         </div>
