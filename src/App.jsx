@@ -8,7 +8,7 @@ import Wave from './components/Wave.jsx'
 import { usePlayer } from './store/playerStore.jsx'
 
 const App = () => {
-  const { infoShow, setFileList, selectedFile } = usePlayer()
+  const { infoShow, setFileList } = usePlayer()
 
   useEffect(() => {
     setFileList([])
@@ -26,12 +26,7 @@ const App = () => {
         <AudioList />
       </section>
 
-      {!infoShow &&
-        <section className="flex flex-col gap-2 bg-bk-1 px-4 py-4 border-t border-gr-3">
-          <h2 className='text-or-2' >{selectedFile.split('.')[0]}</h2>
-          <Wave />
-        </section>
-      }
+      {!infoShow && <Wave />}
     </div>
   )
 }

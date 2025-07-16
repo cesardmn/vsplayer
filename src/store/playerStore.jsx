@@ -16,4 +16,7 @@ export const usePlayer = create((set) => ({
 
   selectedFile: '',
   setSelectedFile: (file) => set({ selectedFile: file }),
+
+  isPlaying: false,
+  setIsPlaying: (isPlaying) => set({ isPlaying }),
 }))
