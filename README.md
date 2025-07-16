@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-**VS Player** é um player de áudio desenvolvido para execução ao vivo de **VS (Voice Sample) e LR (Line Return)** com foco em praticidade, performance e estabilidade.
+**VS Player** é um player de áudio desenvolvido para execução ao vivo de **VS** em **LR** com foco em praticidade, performance e estabilidade.
 
 A aplicação oferece uma interface limpa e responsiva, com controles acessíveis via teclado, suporte completo a dispositivos móveis e visualização clara da wave de áudio.
 
