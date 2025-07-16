@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 import { usePlayer } from '../store/playerStore.jsx'
 import { DB } from '../services/indexedDB'
+import { useKeyboardListeners } from '../hooks/useKeyboardListeners'
 
 const Wave = () => {
   const waveRef = useRef(null)
@@ -12,13 +13,27 @@ const Wave = () => {
   const [remainingTime, setRemainingTime] = useState('0:00')
   const [currentTime, setCurrentTime] = useState(0)
 
-  // Formatação de tempo (mesma função usada em useAudioUpload)
-  const formatDuration = (seconds) => {
+  const formatDuration = useCallback((seconds) => {
     if (!seconds) return '0:00'
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`
-  }
+  }, [])
+
+  const togglePlayStop = useCallback(() => {
+    if (!wsRef.current) return
+    if (isPlaying) {
+      wsRef.current.stop()
+      setIsPlaying(false)
+    } else {
+      wsRef.current.play()
+      setIsPlaying(true)
+    }
+  }, [isPlaying, setIsPlaying])
+
+  useKeyboardListeners({
+    onPlayPause: togglePlayStop,
+  })
 
   useEffect(() => {
     if (!wsRef.current && waveRef.current) {
@@ -38,8 +53,6 @@ const Wave = () => {
       })
 
       wsRef.current.on('ready', () => {
-        console.log('✅ WaveSurfer pronto!')
-        // Obter duração total quando o áudio estiver pronto
         const totalDuration = wsRef.current.getDuration()
         setDuration(formatDuration(totalDuration))
         setRemainingTime(formatDuration(totalDuration))
@@ -49,7 +62,6 @@ const Wave = () => {
       wsRef.current.on('pause', () => setIsPlaying(false))
       wsRef.current.on('finish', () => setIsPlaying(false))
 
-      // Atualizar tempo atual durante a reprodução
       wsRef.current.on('audioprocess', () => {
         if (wsRef.current) {
           const time = wsRef.current.getCurrentTime()
@@ -66,18 +78,12 @@ const Wave = () => {
         wsRef.current = null
       }
     }
-  }, [setIsPlaying])
+  }, [setIsPlaying, formatDuration])
 
   useEffect(() => {
     const loadAudio = async () => {
       if (!selectedFile || !wsRef.current) return
-
-      if (isPlaying) {
-        console.warn('⚠️ Ignorando troca de áudio porque ainda está tocando')
-        return
-      }
-
-      console.log('🎵 Carregando:', selectedFile)
+      if (isPlaying) return
 
       try {
         const [blob, meta] = await Promise.all([
@@ -85,22 +91,16 @@ const Wave = () => {
           DB.getAudioMeta(selectedFile),
         ])
 
-        if (!blob) {
-          console.error('Áudio não encontrado no cache:', selectedFile)
-          return
-        }
+        if (!blob) return
 
         const url = URL.createObjectURL(blob)
-
         if (meta?.peaks) {
           wsRef.current.load(url, meta.peaks)
         } else {
           wsRef.current.load(url)
         }
 
-        setCurrentFile(selectedFile) // ← Atualiza o "arquivo em uso"
-
-        console.log('📡 Áudio carregado:', selectedFile)
+        setCurrentFile(selectedFile)
       } catch (error) {
         console.error('Erro ao carregar áudio:', error)
       }
@@ -109,32 +109,8 @@ const Wave = () => {
     loadAudio()
   }, [selectedFile, isPlaying])
 
-  const togglePlayStop = useCallback(() => {
-    if (!wsRef.current) return
-
-    if (isPlaying) {
-      wsRef.current.stop()
-      setIsPlaying(false)
-    } else {
-      wsRef.current.play()
-      setIsPlaying(true)
-    }
-  }, [isPlaying, setIsPlaying])
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowRight') {
-        togglePlayStop()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [togglePlayStop])
-
   return (
     <section className="wave-container flex flex-col gap-2 bg-bk-1 px-4 py-4 border-t border-gr-3">
-      {' '}
       <div
         ref={waveRef}
         className="flex w-full h-36 overflow-scroll bg-bk-2 rounded-2xl items-center"
@@ -165,4 +141,5 @@ const Wave = () => {
     </section>
   )
 }
+
 export default Wave

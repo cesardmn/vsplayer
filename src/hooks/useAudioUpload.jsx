@@ -10,6 +10,7 @@ export const useAudioUpload = () => {
     setIsProcessing,
     toggleInfoShow,
     setFileList,
+    setSelectedFile,
   } = usePlayer()
 
   const formatDuration = (seconds) => {
@@ -60,6 +61,9 @@ export const useAudioUpload = () => {
       }
 
       setFileList(updatedList)
+      if (updatedList.length > 0) {
+        setSelectedFile(updatedList[0].name)
+      }
     } catch (error) {
       console.error('Error in processFiles:', error)
     } finally {
