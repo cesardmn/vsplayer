@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 import { usePlayer } from '../store/playerStore.jsx'
 import { DB } from '../services/indexedDB'
@@ -109,7 +109,7 @@ const Wave = () => {
     loadAudio()
   }, [selectedFile, isPlaying])
 
-  const togglePlayStop = () => {
+  const togglePlayStop = useCallback(() => {
     if (!wsRef.current) return
 
     if (isPlaying) {
@@ -119,7 +119,18 @@ const Wave = () => {
       wsRef.current.play()
       setIsPlaying(true)
     }
-  }
+  }, [isPlaying, setIsPlaying])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight') {
+        togglePlayStop()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [togglePlayStop])
 
   return (
     <section className="wave-container flex flex-col gap-2 bg-bk-1 px-4 py-4 border-t border-gr-3">
