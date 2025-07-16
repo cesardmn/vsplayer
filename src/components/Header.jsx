@@ -1,5 +1,8 @@
-// src/components/Header.jsx
-import { MdOutlineScreenLockPortrait, MdDelete } from 'react-icons/md'
+import {
+  MdOutlineScreenLockPortrait,
+  MdDelete,
+  MdInstallDesktop,
+} from 'react-icons/md'
 import { useState, useEffect } from 'react'
 import { usePlayer } from '../store/playerStore'
 import { DB } from '../services/indexedDB'
@@ -8,7 +11,54 @@ const Header = () => {
   const [wakeLock, setWakeLock] = useState(null)
   const [isLocked, setIsLocked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [isAppInstalled, setIsAppInstalled] = useState(false)
   const { toggleInfoShow, setFileList } = usePlayer()
+
+  useEffect(() => {
+    const checkInstallation = () => {
+      const isInstalled =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone ||
+        document.referrer.includes('android-app://')
+      setIsAppInstalled(isInstalled)
+    }
+
+    checkInstallation()
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setIsAppInstalled(false)
+    }
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true)
+      setDeferredPrompt(null)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt
+      )
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+
+    deferredPrompt.prompt()
+
+    const { outcome } = await deferredPrompt.userChoice
+    console.log(`User response to the install prompt: ${outcome}`)
+
+    setDeferredPrompt(null)
+  }
 
   const toggleLockScreen = async () => {
     if (isLocked) {
@@ -33,7 +83,7 @@ const Header = () => {
 
         clearReq.onsuccess = () => {
           console.log('IndexedDB limpo com sucesso')
-          setFileList([]) // Limpa a lista de arquivos no estado
+          setFileList([])
         }
 
         clearReq.onerror = (error) => {
@@ -92,6 +142,17 @@ const Header = () => {
       </h1>
 
       <div className="flex gap-4">
+        {!isAppInstalled && deferredPrompt && (
+          <button
+            onClick={handleInstallClick}
+            aria-label="Instalar aplicativo"
+            className="cursor-pointer text-gr-2 hover:text-or-3 transition-colors"
+            title="Instalar aplicativo"
+          >
+            <MdInstallDesktop size={24} />
+          </button>
+        )}
+
         <button
           onClick={handleClearDB}
           aria-label="Limpar todos os áudios"
@@ -114,6 +175,8 @@ const Header = () => {
           <MdOutlineScreenLockPortrait
             size={24}
             className={isLocked ? 'text-or-3' : 'text-gr-2'}
+            aria-label="Manter tela ligada"
+            title="Manter tela ligada"
           />
         </button>
       </div>
